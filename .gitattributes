@@ -9,4 +9,4 @@
 
 # Exclude non-essential files from dist
 /tests export-ignore
-phpunit.xml.dist export-ignore
+phpunit.xml export-ignore
