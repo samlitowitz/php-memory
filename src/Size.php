@@ -18,7 +18,7 @@ final class Size
 	public static function create(int $value, Unit $unit): Size
 	{
 		$size = new Size(0, $unit);
-		$size->set_value($value);
+		$size->setValue($value);
 		return $size;
 	}
 

@@ -70,7 +70,7 @@ final class MemoryLimit
 
 	private static function parsePHPShortHand(string $limit): Size
 	{
-		$matched = preg_match('/([0-9]+)([^$]+)', $limit, $matches);
+		$matched = preg_match('/([0-9]+)([^$]+)/', $limit, $matches);
 		if (!$matched) {
 			throw new InvalidArgumentException(sprintf('invalid format: `%s`', $limit));
 		}
