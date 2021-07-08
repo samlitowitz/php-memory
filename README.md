@@ -9,4 +9,4 @@ composer require samlitowitz/php-memory
 ```
 
 ## Usage
-See [tests](tests/PhpMemory) for examples of how to use.
+See [MemoryLimitTest](tests/PhpMemory/MemoryLimitTest.php) for examples of how to use this library.
