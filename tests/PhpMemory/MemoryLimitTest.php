@@ -8,12 +8,13 @@ use PhpMemory\Unit\Binary\Megabyte;
 use PhpMemory\Unit\Byte;
 use PHPUnit\Framework\TestCase;
 
-final class MemoryLimitTest extends TestCase {
+final class MemoryLimitTest extends TestCase
+{
 
 	/**
-	 * @dataProvider get_provider
+	 * @dataProvider get_with_strings_provider
 	 */
-	public function test_get(string $limit, Size $expected)
+	public function test_get_with_strings(string $limit, Size $expected)
 	{
 		ini_set(MemoryLimit::INI_OPTION, $limit);
 		$actual = MemoryLimit::get();
@@ -24,7 +25,7 @@ final class MemoryLimitTest extends TestCase {
 		$this->assertEquals($expected->getBytes(), $actual->getBytes());
 	}
 
-	public function get_provider()
+	public function get_with_strings_provider()
 	{
 		return [
 			'integer string bytes' => [
@@ -44,5 +45,40 @@ final class MemoryLimitTest extends TestCase {
 				Size::create(1, new Gigabyte()),
 			],
 		];
+	}
+
+	public function test_get_no_limit()
+	{
+		ini_set(MemoryLimit::INI_OPTION, -1);
+		$actual = MemoryLimit::get();
+
+		$this->assertNull($actual);
+	}
+
+	public function test_get_positive_integer()
+	{
+		$expected = Size::create(100, new Byte());
+
+		ini_set(MemoryLimit::INI_OPTION, 100);
+		$actual = MemoryLimit::get();
+
+		$this->assertNotNull($actual);
+		$this->assertEquals($expected->getValue(), $actual->getValue());
+		$this->assertEquals($expected->getUnit()->bytes(), $actual->getUnit()->bytes());
+		$this->assertEquals($expected->getBytes(), $actual->getBytes());
+	}
+
+	public function test_get_negative_integer_throws()
+	{
+		ini_set(MemoryLimit::INI_OPTION, -10);
+		$this->expectException(InvalidArgumentException::class);
+		MemoryLimit::get();
+	}
+
+	public function test_get_invalid_unit_type_throws()
+	{
+		ini_set(MemoryLimit::INI_OPTION, '1MB');
+		$this->expectException(InvalidArgumentException::class);
+		MemoryLimit::get();
 	}
 }
