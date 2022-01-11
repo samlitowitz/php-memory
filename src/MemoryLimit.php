@@ -40,7 +40,7 @@ final class MemoryLimit
 			ini_set(self::INI_OPTION, $size->getBytes());
 			return;
 		}
-		ini_set(self::INI_OPTION, self::toPHPShortHand($size));;
+		ini_set(self::INI_OPTION, self::toPHPShortHand($size));
 	}
 
 	private static function toPHPShortHand(Size $size): string
