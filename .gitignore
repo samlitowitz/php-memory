@@ -3,4 +3,6 @@
 !.gitattributes
 !.gitignore
 
+composer.lock
+
 vendor
