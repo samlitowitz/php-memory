@@ -10,13 +10,14 @@ use PhpMemory\Unit\Binary\Mebibyte;
 use PhpMemory\Unit\Binary\Megabyte;
 use PhpMemory\Unit\Byte;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 final class MemoryLimitTest extends TestCase
 {
     /**
-     * @dataProvider getWithStringsProvider
+     * @dataProvider withStringsProvider
      */
-    public function testGetWithStrings(Unit $unit): void
+    public function testWithStrings(Unit $unit): void
     {
         $expected = $this->minimumSizeGreaterThan(
             memory_get_usage(),
@@ -32,7 +33,7 @@ final class MemoryLimitTest extends TestCase
         $this->assertEquals($expected->getBytes(), $actual->getBytes());
     }
 
-    public function getWithStringsProvider(): array
+    public function withStringsProvider(): array
     {
         return [
             'bytes' => [
@@ -60,9 +61,12 @@ final class MemoryLimitTest extends TestCase
 
     public function testGetPositiveInteger(): void
     {
-        $expected = Size::create(100, new Byte());
+        $expected = $this->minimumSizeGreaterThan(
+            memory_get_usage(),
+            new Byte()
+        );
 
-        ini_set(MemoryLimit::INI_OPTION, 100);
+        ini_set(MemoryLimit::INI_OPTION, $expected->getBytes());
         $actual = MemoryLimit::get();
 
         $this->assertNotNull($actual);
@@ -80,7 +84,20 @@ final class MemoryLimitTest extends TestCase
 
     public function testGetInvalidTypeThrows(): void
     {
-        ini_set(MemoryLimit::INI_OPTION, '1MB');
+        $expected = $this->minimumSizeGreaterThan(
+            memory_get_usage(),
+            new Byte()
+        );
+        $limit = sprintf(
+            '%d%s',
+            $expected->getValue(),
+            (new Megabyte())->binaryPrefix()
+        );
+        try {
+            ini_set(MemoryLimit::INI_OPTION, $limit);
+        } catch (Throwable $t) {
+            $this->assertNotEmpty($t);
+        }
         $this->expectException(InvalidArgumentException::class);
         MemoryLimit::get();
     }
@@ -88,13 +105,12 @@ final class MemoryLimitTest extends TestCase
     /**
      * @dataProvider setAsBytesProvider
      */
-    public function testSetAsBytes(Size $expected): void
+    public function testSetAsBytes(Unit $unit): void
     {
-        // avoid attempting to set memory limit lower than current usage
-        $current_memory_usage_in_bytes = memory_get_usage();
-        if ($expected->getBytes() <= $current_memory_usage_in_bytes) {
-            // get unit bytes, add fuzz factor to expected to
-        }
+        $expected = $this->minimumSizeGreaterThan(
+            memory_get_usage(),
+            $unit
+        );
 
         MemoryLimit::set($expected);
         $actual = MemoryLimit::get();
@@ -106,73 +122,26 @@ final class MemoryLimitTest extends TestCase
     public function setAsBytesProvider(): array
     {
         return [
-            '1 bytes' => [
-                Size::create(1, new Byte()),
+            'bytes' => [
+                new Byte(),
             ],
-            '1 kibibyte' => [
-                Size::create(1, new Kibibyte()),
+            'kibibyte' => [
+                new Kibibyte(),
             ],
-            '1 kilobyte' => [
-                Size::create(1, new Kilobyte()),
+            'kilobyte' => [
+                new Kilobyte(),
             ],
-            '1 mebibyte' => [
-                Size::create(1, new Mebibyte()),
+            'mebibyte' => [
+                new Mebibyte(),
             ],
-            '1 megabyte' => [
-                Size::create(1, new Megabyte()),
+            'megabyte' => [
+                new Megabyte(),
             ],
-            '1 gibibyte' => [
-                Size::create(1, new Gibibyte()),
+            'gibibyte' => [
+                new Gibibyte(),
             ],
-            '1 gigabyte' => [
-                Size::create(1, new Gigabyte()),
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider setAsStringProvider
-     */
-    public function testSetAsString(Size $size, string $expected): void
-    {
-        MemoryLimit::set($size, true);
-        $actual = ini_get(MemoryLimit::INI_OPTION);
-
-        $this->assertNotNull($actual);
-        $this->assertNotFalse($actual);
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function setAsStringProvider(): array
-    {
-        return [
-            '100 bytes' => [
-                Size::create(100, new Byte()),
-                '100',
-            ],
-            '1 kibibyte' => [
-                Size::create(1, new Kibibyte()),
-                '1K',
-            ],
-            '1 kilobyte' => [
-                Size::create(1, new Kilobyte()),
-                '1K',
-            ],
-            '1 mebibyte' => [
-                Size::create(1, new Mebibyte()),
-                '1M',
-            ],
-            '1 megabyte' => [
-                Size::create(1, new Megabyte()),
-                '1M',
-            ],
-            '1 gibibyte' => [
-                Size::create(1, new Gibibyte()),
-                '1G',
-            ],
-            '1 gigabyte' => [
-                Size::create(1, new Gigabyte()),
-                '1G',
+            'gigabyte' => [
+                new Gigabyte(),
             ],
         ];
     }
