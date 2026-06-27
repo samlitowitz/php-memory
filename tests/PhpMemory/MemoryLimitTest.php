@@ -16,9 +16,14 @@ final class MemoryLimitTest extends TestCase
     /**
      * @dataProvider getWithStringsProvider
      */
-    public function testGetWithStrings(string $limit, Size $expected): void
+    public function testGetWithStrings(Unit $unit): void
     {
-        ini_set(MemoryLimit::INI_OPTION, $limit);
+        $expected = $this->minimumSizeGreaterThan(
+            memory_get_usage(),
+            $unit
+        );
+
+        ini_set(MemoryLimit::INI_OPTION, $this->toMemoryLimitShorthand($expected));
         $actual = MemoryLimit::get();
 
         $this->assertNotNull($actual);
@@ -30,21 +35,17 @@ final class MemoryLimitTest extends TestCase
     public function getWithStringsProvider(): array
     {
         return [
-            'integer string bytes' => [
-                '100',
-                Size::create(100, new Byte()),
+            'bytes' => [
+                new Byte(),
             ],
-            '1K' => [
-                '1K',
-                Size::create(1, new Kilobyte()),
+            'K' => [
+                new Kilobyte(),
             ],
-            '1M' => [
-                '1M',
-                Size::create(1, new Megabyte()),
+            'M' => [
+                new Megabyte(),
             ],
-            '1G' => [
-                '1G',
-                Size::create(1, new Gigabyte()),
+            'G' => [
+                new Gigabyte(),
             ],
         ];
     }
@@ -89,6 +90,12 @@ final class MemoryLimitTest extends TestCase
      */
     public function testSetAsBytes(Size $expected): void
     {
+        // avoid attempting to set memory limit lower than current usage
+        $current_memory_usage_in_bytes = memory_get_usage();
+        if ($expected->getBytes() <= $current_memory_usage_in_bytes) {
+            // get unit bytes, add fuzz factor to expected to
+        }
+
         MemoryLimit::set($expected);
         $actual = MemoryLimit::get();
 
@@ -99,8 +106,8 @@ final class MemoryLimitTest extends TestCase
     public function setAsBytesProvider(): array
     {
         return [
-            '100 bytes' => [
-                Size::create(100, new Byte()),
+            '1 bytes' => [
+                Size::create(1, new Byte()),
             ],
             '1 kibibyte' => [
                 Size::create(1, new Kibibyte()),
@@ -176,5 +183,20 @@ final class MemoryLimitTest extends TestCase
         $actual = MemoryLimit::get();
 
         $this->assertNull($actual);
+    }
+
+    private function minimumSizeGreaterThan(int $memoryInBytes, Unit $unit, float $safetyMargin = 3): Size
+    {
+        $memoryInBytesWithSafetyMargin = $memoryInBytes * $safetyMargin;
+        $minimumSizeInUnit = ceil($memoryInBytesWithSafetyMargin / $unit->bytes());
+        return Size::create(
+            intval($minimumSizeInUnit),
+            $unit
+        );
+    }
+
+    private function toMemoryLimitShorthand(Size $size): string
+    {
+        return sprintf('%d%s', $size->getValue(), $size->getUnit()->memoryLimitSuffix());
     }
 }
