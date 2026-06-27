@@ -1,7 +1,10 @@
 .*
+
 !.editorconfig
 !.gitattributes
 !.gitignore
+
+!.github/
 
 composer.lock
 
