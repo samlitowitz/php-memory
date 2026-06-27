@@ -48,24 +48,18 @@ final class MemoryLimit
         $unit = $size->getUnit();
         switch (true) {
             case $unit instanceof Byte:
-                $shortHandSuffix = '';
-                break;
             case $unit instanceof Kilobyte:
             case $unit instanceof Kibibyte:
-                $shortHandSuffix = 'K';
-                break;
             case $unit instanceof Megabyte:
             case $unit instanceof Mebibyte:
-                $shortHandSuffix = 'M';
-                break;
             case $unit instanceof Gigabyte:
             case $unit instanceof Gibibyte:
-                $shortHandSuffix = 'G';
                 break;
             default:
                 throw new InvalidArgumentException(sprintf('unsupported unit type `%s`', $unit->name()));
         }
-        return sprintf('%d%s', $size->getValue(), $shortHandSuffix);
+
+        return sprintf('%d%s', $size->getValue(), $unit->memoryLimitSuffix());
     }
 
     private static function parsePHPShortHand(string $limit): Size
