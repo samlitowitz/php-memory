@@ -75,11 +75,27 @@ final class MemoryLimitTest extends TestCase
         $this->assertEquals($expected->getBytes(), $actual->getBytes());
     }
 
-    public function testGetNegativeIntegerThrows(): void
+    public function testGetNegativeIntegerLessThanPHP82(): void
     {
+        if (version_compare(phpversion(), '8.2.0', '>=')) {
+            $this->markTestSkipped('For PHP versions less than 8.2.0');
+        }
+
         ini_set(MemoryLimit::INI_OPTION, -10);
         $this->expectException(InvalidArgumentException::class);
         MemoryLimit::get();
+    }
+    public function testGetNegativeIntegerPHP82OrGreater(): void
+    {
+        if (version_compare(phpversion(), '8.2.0', '<')) {
+            $this->markTestSkipped('For PHP versions 8.2.0 or greater');
+        }
+        try {
+            ini_set(MemoryLimit::INI_OPTION, -10);
+        } catch (Throwable $t) {
+            $this->assertNotEmpty($t);
+        }
+        $this->assertNull(MemoryLimit::get());
     }
 
     public function testGetInvalidTypeThrows(): void
