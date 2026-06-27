@@ -6,18 +6,18 @@ use PhpMemory\Unit;
 
 final class Kilobyte implements Unit
 {
-	public function name(): string
-	{
-		return 'Kilobyte';
-	}
+    public function name(): string
+    {
+        return 'Kilobyte';
+    }
 
-	public function suffix(): string
-	{
-		return 'KB';
-	}
+    public function suffix(): string
+    {
+        return 'KB';
+    }
 
-	public function bytes(): int
-	{
-		return (new Kibibyte())->bytes();
-	}
+    public function bytes(): int
+    {
+        return (new Kibibyte())->bytes();
+    }
 }

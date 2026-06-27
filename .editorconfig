@@ -7,5 +7,8 @@ indent_style = tab
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[{composer.json, *.md}]
+[{composer.json,*.markdown}]
+indent_style = space
+
+[*.php]
 indent_style = space

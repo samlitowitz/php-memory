@@ -4,9 +4,9 @@ namespace PhpMemory;
 
 interface Unit
 {
-	public function name(): string;
+    public function name(): string;
 
-	public function suffix(): string;
+    public function suffix(): string;
 
-	public function bytes(): int;
+    public function bytes(): int;
 }
