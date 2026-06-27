@@ -25,6 +25,37 @@ on:
             - 'src/**'
             - 'tests/**'
 jobs:
+    php81:
+        name: PHP 8.1
+        runs-on: ubuntu-latest
+        if: |
+            github.event_name == 'push'
+              || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci'))
+        steps:
+            -   uses: actions/checkout@v4
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.1'
+
+            -   name: Validate composer.json
+                run: composer validate --strict
+
+            -   name: Cache Composer packages
+                id: composer-cache
+                uses: actions/cache@v3
+                with:
+                    path: vendor
+                    key: ${{ runner.os }}-${{ github.job}}-${{ hashFiles('**/composer.lock') }}
+                    restore-keys: |
+                        ${{ runner.os }}-${{ github.job}}-
+
+            -   name: Install dependencies
+                run: composer install --prefer-dist --no-progress
+
+            -   name: Run checks
+                run: composer run check
     php82:
         name: PHP 8.2
         runs-on: ubuntu-latest
