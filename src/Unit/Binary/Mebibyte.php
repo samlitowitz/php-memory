@@ -11,9 +11,14 @@ final class Mebibyte implements Unit
         return 'Mebibyte';
     }
 
-    public function suffix(): string
+    public function binaryPrefix(): string
     {
         return 'MiB';
+    }
+
+    public function memoryLimitSuffix(): string
+    {
+        return 'M';
     }
 
     public function bytes(): int

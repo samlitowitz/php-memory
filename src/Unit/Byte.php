@@ -11,9 +11,14 @@ final class Byte implements Unit
         return 'Byte';
     }
 
-    public function suffix(): string
+    public function binaryPrefix(): string
     {
         return 'B';
+    }
+
+    public function memoryLimitSuffix(): string
+    {
+        return '';
     }
 
     public function bytes(): int

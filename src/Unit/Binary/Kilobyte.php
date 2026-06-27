@@ -11,11 +11,15 @@ final class Kilobyte implements Unit
         return 'Kilobyte';
     }
 
-    public function suffix(): string
+    public function binaryPrefix(): string
     {
         return 'KB';
     }
 
+    public function memoryLimitSuffix(): string
+    {
+        return 'K';
+    }
     public function bytes(): int
     {
         return (new Kibibyte())->bytes();

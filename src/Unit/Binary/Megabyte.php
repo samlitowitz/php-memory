@@ -11,9 +11,14 @@ final class Megabyte implements Unit
         return 'Megabyte';
     }
 
-    public function suffix(): string
+    public function binaryPrefix(): string
     {
         return 'MB';
+    }
+
+    public function memoryLimitSuffix(): string
+    {
+        return 'M';
     }
 
     public function bytes(): int

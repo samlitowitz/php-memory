@@ -11,11 +11,15 @@ final class Kibibyte implements Unit
         return 'Kibibyte';
     }
 
-    public function suffix(): string
+    public function binaryPrefix(): string
     {
         return 'KiB';
     }
 
+    public function memoryLimitSuffix(): string
+    {
+        return 'K';
+    }
     public function bytes(): int
     {
         return 1024;

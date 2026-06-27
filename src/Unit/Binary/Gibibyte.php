@@ -11,11 +11,15 @@ final class Gibibyte implements Unit
         return 'Gibibyte';
     }
 
-    public function suffix(): string
+    public function binaryPrefix(): string
     {
         return 'GiB';
     }
 
+    public function memoryLimitSuffix(): string
+    {
+        return 'G';
+    }
     public function bytes(): int
     {
         return 1024 * 1024 * 1024;

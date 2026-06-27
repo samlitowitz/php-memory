@@ -11,11 +11,15 @@ final class Gigabyte implements Unit
         return 'Gigabyte';
     }
 
-    public function suffix(): string
+    public function binaryPrefix(): string
     {
         return 'GB';
     }
 
+    public function memoryLimitSuffix(): string
+    {
+        return 'G';
+    }
     public function bytes(): int
     {
         return (new Gibibyte())->bytes();
