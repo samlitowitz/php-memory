@@ -1,0 +1,6 @@
+parameters:
+	paths:
+		- src
+	level: max
+includes:
+    - vendor/samlitowitz/phpstan-opinionated-nomenclature/extension.neon

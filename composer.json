@@ -20,7 +20,23 @@
             "PhpMemory\\": ["src/", "tests/PhpMemory"]
         }
     },
+    "scripts": {
+        "check": [
+            "@analyze",
+            "@cs-check",
+            "@unit-tests"
+        ],
+        "analyze": "phpstan --ansi analyse -vvv",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "unit-tests": "phpunit --colors=always"
+    },
     "require-dev": {
         "phpunit/phpunit": "^9"
+    },
+    "require": {
+        "phpstan/phpstan": "^2.2",
+        "squizlabs/php_codesniffer": "^4.0",
+        "samlitowitz/phpstan-opinionated-nomenclature": "^3.0"
     }
 }
