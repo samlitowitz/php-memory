@@ -1,4 +1,6 @@
 # PHP Memory
+[![Pipes](https://github.com/samlitowitz/php-memory/actions/workflows/pipes.yaml/badge.svg?branch=master)](https://github.com/samlitowitz/php-memory/actions/workflows/pipes.yaml)
+
 ## Table of Contents
 1. [Installation](#installation)
 1. [Usage](#usage)
